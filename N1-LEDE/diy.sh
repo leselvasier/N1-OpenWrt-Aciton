@@ -11,17 +11,17 @@ function git_sparse_clone() {
 
 # Add packages
 #添加科学上网源
-git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall-packages package/openwrt-passwall-packages
-git clone --depth=1 https://github.com/xiaorouji/openwrt-passwall package/openwrt-passwall
+git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall-packages package/openwrt-passwall-packages
+git clone --depth=1 https://github.com/Openwrt-Passwall/openwrt-passwall package/openwrt-passwall
+git clone --depth=1 https://github.com/vernesong/OpenClash package/luci-app-openclash
 git clone -b 18.06 --single-branch --depth 1 https://github.com/jerrykuku/luci-theme-argon package/luci-theme-argon
 git clone -b 18.06 --single-branch --depth 1 https://github.com/jerrykuku/luci-app-argon-config package/luci-app-argon-config
 git clone --depth=1 https://github.com/ophub/luci-app-amlogic package/amlogic
-git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddnsgo
+#git clone --depth=1 https://github.com/sirpdboy/luci-app-ddns-go package/ddnsgo
 #git clone --depth=1 https://github.com/sirpdboy/NetSpeedTest package/NetSpeedTest
-
 git clone -b v5-lua --single-branch --depth 1 https://github.com/sbwml/luci-app-mosdns package/mosdns
-git clone -b lua --single-branch --depth 1 https://github.com/sbwml/luci-app-alist package/alist
-git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git package/lucky
+#git clone -b lua --single-branch --depth 1 https://github.com/sbwml/luci-app-alist package/alist
+#git clone --depth=1 https://github.com/gdy666/luci-app-lucky.git package/lucky
 #添加自定义的软件包源
 #git_sparse_clone main https://github.com/kiddin9/kwrt-packages ddns-go
 #git_sparse_clone main https://github.com/kiddin9/kwrt-packages luci-app-ddns-go
@@ -36,8 +36,16 @@ rm -rf feeds/luci/applications/luci-app-mosdns
 #rm -rf feeds/luci/themes/luci-theme-design
 #rm -rf feeds/luci/applications/luci-app-design-config
 
+# 添加 OpenClash Meta 内核
+mkdir -p files/etc/openclash/core
+wget -qO "clash_meta.tar.gz" "https://raw.githubusercontent.com/vernesong/OpenClash/core/master/meta/clash-linux-arm64.tar.gz"
+tar -zxvf "clash_meta.tar.gz" -C files/etc/openclash/core/
+mv files/etc/openclash/core/clash files/etc/openclash/core/clash_meta
+chmod +x files/etc/openclash/core/clash_meta
+rm -f "clash_meta.tar.gz"
+
 # Default IP
-sed -i 's/192.168.1.1/192.168.2.2/g' package/base-files/files/bin/config_generate
+sed -i 's/192.168.1.1/192.168.123.2/g' package/base-files/files/bin/config_generate
 
 #修改默认时间格式
 sed -i 's/os.date()/os.date("%Y-%m-%d %H:%M:%S %A")/g' $(find ./package/*/autocore/files/ -type f -name "index.htm")
